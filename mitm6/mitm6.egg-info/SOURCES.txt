@@ -1,0 +1,10 @@
+LICENSE
+setup.py
+mitm6/__init__.py
+mitm6/mitm6.py
+mitm6.egg-info/PKG-INFO
+mitm6.egg-info/SOURCES.txt
+mitm6.egg-info/dependency_links.txt
+mitm6.egg-info/entry_points.txt
+mitm6.egg-info/requires.txt
+mitm6.egg-info/top_level.txt

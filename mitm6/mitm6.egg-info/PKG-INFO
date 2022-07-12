@@ -1,0 +1,21 @@
+Metadata-Version: 2.1
+Name: mitm6
+Version: 0.3.0
+Summary: Pwning IPv4 via IPv6
+Home-page: https://github.com/dirkjanm/mitm6/
+Author: Dirk-jan Mollema / Fox-IT
+Author-email: dirkjan.mollema@fox-it.com
+License: GPLv2
+Platform: UNKNOWN
+Classifier: Intended Audience :: Information Technology
+Classifier: Framework :: Twisted
+Classifier: License :: OSI Approved :: GNU General Public License v2 (GPLv2)
+Classifier: Programming Language :: Python :: 2
+Classifier: Programming Language :: Python :: 2.7
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.5
+Classifier: Programming Language :: Python :: 3.6
+License-File: LICENSE
+
+UNKNOWN
+

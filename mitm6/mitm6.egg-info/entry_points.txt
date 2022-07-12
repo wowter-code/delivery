@@ -1,0 +1,3 @@
+[console_scripts]
+mitm6 = mitm6.mitm6:main
+
