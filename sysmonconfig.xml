@@ -1,0 +1,50 @@
+<Sysmon schemaversion="4.70">
+  <HashAlgorithms>SHA256</HashAlgorithms>
+  <EventFiltering>
+    <!-- Process events -->
+    <ProcessCreate onmatch="include"/>
+    <ProcessTerminate onmatch="include"/>
+    
+    <!-- Network connections -->
+    <NetworkConnect onmatch="include"/>
+    
+    <!-- File events -->
+    <FileCreateTime onmatch="include"/>
+    <FileCreate onmatch="include"/>
+    <FileDelete onmatch="include"/>
+    
+    <!-- Registry events -->
+    <RegistryEvent onmatch="include"/>
+    
+    <!-- Image loads (DLLs, drivers) -->
+    <DriverLoad onmatch="include"/>
+    <ImageLoad onmatch="include"/>
+    
+    <!-- Pipe events -->
+    <PipeEvent onmatch="include"/>
+    
+    <!-- WMI events -->
+    <WmiEvent onmatch="include"/>
+    
+    <!-- DNS queries (requires Sysmon v13+) -->
+    <DnsQuery onmatch="include"/>
+    
+    <!-- Clipboard events (optional, very verbose) -->
+    <!-- <ClipboardEvent onmatch="include"/> -->
+    
+    <!-- Service changes -->
+    <ServiceStateChange onmatch="include"/>
+    
+    <!-- Process access events -->
+    <ProcessAccess onmatch="include"/>
+    
+    <!-- File creation stream hash -->
+    <FileCreateStreamHash onmatch="include"/>
+    
+    <!-- Kernel module load events -->
+    <ImageLoaded onmatch="include"/>
+    
+    <!-- Filter exclusions (optional, e.g., ignore trusted browsers or svchost noise) -->
+    <!-- Example: <ImageLoad onmatch="exclude"><Image condition="contains">C:\Windows\System32\svchost.exe</Image></ImageLoad> -->
+  </EventFiltering>
+</Sysmon>
