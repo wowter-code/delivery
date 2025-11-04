@@ -1,50 +1,96 @@
 <Sysmon schemaversion="4.70">
   <HashAlgorithms>SHA256</HashAlgorithms>
+  <CheckRevocation/>
+  <DnsLookup>True</DnsLookup>
+  <ArchiveDirectory>Sysmon</ArchiveDirectory>
+  
   <EventFiltering>
-    <!-- Process events -->
-    <ProcessCreate onmatch="include"/>
-    <ProcessTerminate onmatch="include"/>
-    
-    <!-- Network connections -->
-    <NetworkConnect onmatch="include"/>
-    
-    <!-- File events -->
-    <FileCreateTime onmatch="include"/>
-    <FileCreate onmatch="include"/>
-    <FileDelete onmatch="include"/>
-    
-    <!-- Registry events -->
-    <RegistryEvent onmatch="include"/>
-    
-    <!-- Image loads (DLLs, drivers) -->
-    <DriverLoad onmatch="include"/>
-    <ImageLoad onmatch="include"/>
-    
-    <!-- Pipe events -->
-    <PipeEvent onmatch="include"/>
-    
-    <!-- WMI events -->
-    <WmiEvent onmatch="include"/>
-    
-    <!-- DNS queries (requires Sysmon v13+) -->
-    <DnsQuery onmatch="include"/>
-    
-    <!-- Clipboard events (optional, very verbose) -->
-    <!-- <ClipboardEvent onmatch="include"/> -->
-    
-    <!-- Service changes -->
-    <ServiceStateChange onmatch="include"/>
-    
-    <!-- Process access events -->
-    <ProcessAccess onmatch="include"/>
-    
-    <!-- File creation stream hash -->
-    <FileCreateStreamHash onmatch="include"/>
-    
-    <!-- Kernel module load events -->
-    <ImageLoaded onmatch="include"/>
-    
-    <!-- Filter exclusions (optional, e.g., ignore trusted browsers or svchost noise) -->
-    <!-- Example: <ImageLoad onmatch="exclude"><Image condition="contains">C:\Windows\System32\svchost.exe</Image></ImageLoad> -->
+    <!-- Process creation - capture ALL -->
+    <ProcessCreate onmatch="exclude">
+      <!-- Minimal exclusions to reduce extreme noise -->
+      <Image condition="is">C:\Windows\System32\smss.exe</Image>
+    </ProcessCreate>
+
+    <!-- Process termination - capture ALL -->
+    <ProcessTerminate onmatch="exclude">
+      <Image condition="is">C:\Windows\System32\smss.exe</Image>
+    </ProcessTerminate>
+
+    <!-- Network connections - capture ALL -->
+    <NetworkConnect onmatch="exclude">
+      <!-- Exclude only loopback to reduce noise -->
+      <DestinationIp condition="is">127.0.0.1</DestinationIp>
+      <DestinationIp condition="is">::1</DestinationIp>
+    </NetworkConnect>
+
+    <!-- File creation time changes - capture ALL -->
+    <FileCreateTime onmatch="exclude">
+      <TargetFilename condition="contains">C:\Windows\Temp</TargetFilename>
+    </FileCreateTime>
+
+    <!-- File creation - capture ALL -->
+    <FileCreate onmatch="exclude">
+      <TargetFilename condition="contains">C:\Windows\Temp</TargetFilename>
+    </FileCreate>
+
+    <!-- File deletion - capture ALL -->
+    <FileDelete onmatch="exclude">
+      <TargetFilename condition="contains">C:\Windows\Temp</TargetFilename>
+    </FileDelete>
+
+    <!-- Registry events - capture ALL -->
+    <RegistryEvent onmatch="exclude">
+      <!-- Minimal temp key exclusions -->
+      <TargetObject condition="contains">\Software\Microsoft\Windows\CurrentVersion\Explorer\Temp</TargetObject>
+    </RegistryEvent>
+
+    <!-- Driver loads - capture ALL -->
+    <DriverLoad onmatch="exclude">
+      <!-- No exclusions - capture all drivers -->
+    </DriverLoad>
+
+    <!-- Image/DLL loads - capture ALL -->
+    <ImageLoad onmatch="exclude">
+      <!-- Minimal exclusions for critical system files -->
+      <Image condition="is">C:\Windows\System32\ntdll.dll</Image>
+    </ImageLoad>
+
+    <!-- Named pipe events - capture ALL -->
+    <PipeEvent onmatch="exclude">
+      <!-- No exclusions -->
+    </PipeEvent>
+
+    <!-- WMI events - capture ALL -->
+    <WmiEvent onmatch="exclude">
+      <!-- No exclusions -->
+    </WmiEvent>
+
+    <!-- DNS queries - capture ALL -->
+    <DnsQuery onmatch="exclude">
+      <!-- Exclude only localhost resolutions -->
+      <QueryName condition="is">localhost</QueryName>
+    </DnsQuery>
+
+    <!-- Service state changes - capture ALL -->
+    <ServiceStateChange onmatch="exclude">
+      <!-- No exclusions -->
+    </ServiceStateChange>
+
+    <!-- Process access - WARNING: Very verbose -->
+    <ProcessAccess onmatch="exclude">
+      <!-- Minimal exclusions for common system access -->
+      <SourceImage condition="end with">\svchost.exe</SourceImage>
+      <SourceImage condition="end with">\System</SourceImage>
+    </ProcessAccess>
+
+    <!-- File stream creation - capture ALL -->
+    <FileCreateStreamHash onmatch="exclude">
+      <TargetFilename condition="contains">C:\Windows\Temp</TargetFilename>
+    </FileCreateStreamHash>
+
+    <!-- Raw disk access - capture ALL -->
+    <RawAccessRead onmatch="exclude">
+      <!-- No exclusions -->
+    </RawAccessRead>
   </EventFiltering>
 </Sysmon>
