@@ -1,0 +1,45 @@
+$Uri = "http://xxxxx/upload"
+$FilePath = "C:\Users\johnny\Desktop\myfile.txt"
+$UploadPath = "/home/ubuntu/dbg/test-server"
+
+# Create web client
+$webclient = New-Object System.Net.WebClient
+
+# Multipart boundary
+$boundary = "---------------------------" + [System.Guid]::NewGuid().ToString("N")
+
+# Prepare multipart content
+$LF = "`r`n"
+$header = "--$boundary$LF" +
+          "Content-Disposition: form-data; name=`"file`"; filename=`"$([System.IO.Path]::GetFileName($FilePath))`"$LF" +
+          "Content-Type: application/octet-stream$LF$LF"
+
+$footer = "$LF--$boundary$LF" +
+          "Content-Disposition: form-data; name=`"path`"$LF$LF$UploadPath$LF" +
+          "--$boundary--$LF"
+
+# Convert header/footer to bytes
+$headerBytes = [System.Text.Encoding]::ASCII.GetBytes($header)
+$footerBytes = [System.Text.Encoding]::ASCII.GetBytes($footer)
+$fileBytes = [System.IO.File]::ReadAllBytes($FilePath)
+
+# Combine all bytes
+$allBytes = New-Object byte[] ($headerBytes.Length + $fileBytes.Length + $footerBytes.Length)
+[Array]::Copy($headerBytes, 0, $allBytes, 0, $headerBytes.Length)
+[Array]::Copy($fileBytes, 0, $allBytes, $headerBytes.Length, $fileBytes.Length)
+[Array]::Copy($footerBytes, 0, $allBytes, $headerBytes.Length + $fileBytes.Length, $footerBytes.Length)
+
+# Send POST request
+$req = [System.Net.HttpWebRequest]::Create($Uri)
+$req.Method = "POST"
+$req.ContentType = "multipart/form-data; boundary=$boundary"
+$req.ContentLength = $allBytes.Length
+
+$reqStream = $req.GetRequestStream()
+$reqStream.Write($allBytes, 0, $allBytes.Length)
+$reqStream.Close()
+
+$response = $req.GetResponse()
+$respStream = $response.GetResponseStream()
+$reader = New-Object System.IO.StreamReader($respStream)
+$reader.ReadToEnd()
